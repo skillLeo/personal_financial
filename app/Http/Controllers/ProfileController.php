@@ -7,6 +7,7 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
+use Intervention\Image\Encoders\JpegEncoder;
 use App\Models\BackupSetting;
 use App\Models\AiSetting;
 
@@ -65,8 +66,10 @@ class ProfileController extends Controller
         }
 
         $filename = 'profiles/' . uniqid() . '.jpg';
-        $image    = Image::read($request->file('photo'))->cover(400, 400);
-        Storage::disk('public')->put($filename, $image->toJpeg(85));
+        $encoded  = Image::decode($request->file('photo'))
+                        ->cover(400, 400)
+                        ->encode(new JpegEncoder(quality: 85));
+        Storage::disk('public')->put($filename, (string) $encoded);
 
         $user->update(['profile_photo' => $filename]);
         return back()->with('success', 'Profile photo updated.');
