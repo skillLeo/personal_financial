@@ -3,11 +3,12 @@ import { Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 
-/* ── Icons ─────────────────────────────────────────────── */
+/* ── Icons ─────────────────────────────────────────────────── */
 const I = {
     dashboard:     <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>,
     transactions:  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M7 16V4m0 0L3 8m4-4 4 4M17 8v12m0 0 4-4m-4 4-4-4"/></svg>,
     reports:       <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>,
+    'ai-insights': <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>,
     accounts:      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>,
     people:        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
     loans:         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>,
@@ -27,6 +28,8 @@ const I = {
     trending:      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
     chevLeft:      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>,
     chevRight:     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>,
+    sun:           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>,
+    moon:          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>,
 };
 
 const NAV_SECTIONS = [
@@ -36,6 +39,7 @@ const NAV_SECTIONS = [
             { name: 'Dashboard',    href: '/',              key: 'dashboard' },
             { name: 'Transactions', href: '/transactions',  key: 'transactions' },
             { name: 'Reports',      href: '/reports',       key: 'reports' },
+            { name: 'AI Insights',  href: '/ai-insights',   key: 'ai-insights' },
         ],
     },
     {
@@ -74,34 +78,28 @@ const MOBILE_NAV = [
 export default function AppLayout({ children }) {
     const { auth, flash, notifications_count } = usePage().props;
 
-    /* sidebar collapse: false=expanded(228px), true=collapsed(64px) */
-    const [collapsed, setCollapsed]       = useState(false);
-    /* mobile: slide-over overlay sidebar */
-    const [mobileOpen, setMobileOpen]     = useState(false);
-    const [moreOpen, setMoreOpen]         = useState(false);
-    const [searchOpen, setSearchOpen]     = useState(false);
-    const [searchQuery, setSearchQuery]   = useState('');
+    const [collapsed, setCollapsed]         = useState(false);
+    const [mobileOpen, setMobileOpen]       = useState(false);
+    const [moreOpen, setMoreOpen]           = useState(false);
+    const [searchOpen, setSearchOpen]       = useState(false);
+    const [searchQuery, setSearchQuery]     = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [searchLoading, setSearchLoading] = useState(false);
-    const [notifOpen, setNotifOpen]       = useState(false);
+    const [notifOpen, setNotifOpen]         = useState(false);
     const [notifications, setNotifications] = useState([]);
-    /* tooltip for collapsed nav items */
-    const [tooltip, setTooltip]           = useState({ show: false, text: '', top: 0 });
+    const [tooltip, setTooltip]             = useState({ show: false, text: '', top: 0 });
+    const [darkMode, setDarkMode]           = useState(() => document.documentElement.classList.contains('dark'));
+    const [darkToggling, setDarkToggling]   = useState(false);
 
     const currentUrl = usePage().url;
     const user       = auth?.user;
     const initials   = user?.name?.[0]?.toUpperCase() || 'U';
     const unread     = notifications_count || 0;
 
-    /* On tablet (768–1024px) default to collapsed */
     useEffect(() => {
-        const init = () => {
-            if (window.innerWidth < 1024) setCollapsed(true);
-        };
+        const init = () => { if (window.innerWidth < 1024) setCollapsed(true); };
         init();
-        const onResize = () => {
-            if (window.innerWidth < 768) setMobileOpen(false);
-        };
+        const onResize = () => { if (window.innerWidth < 768) setMobileOpen(false); };
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);
@@ -135,10 +133,31 @@ export default function AppLayout({ children }) {
 
     const isActive = (key) => {
         if (key === 'dashboard') return currentUrl === '/';
+        if (key === 'ai-insights') return currentUrl.startsWith('/ai-insights');
         return currentUrl.startsWith('/' + key);
     };
 
-    /* ─── Sidebar content (used by both desktop sidebar and mobile overlay) ─── */
+    const toggleDarkMode = async () => {
+        if (darkToggling) return;
+        setDarkToggling(true);
+        const newMode = !darkMode;
+        setDarkMode(newMode);
+        document.documentElement.classList.toggle('dark', newMode);
+
+        try {
+            await fetch('/settings/dark-mode', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content,
+                    'Accept': 'application/json',
+                },
+            });
+        } catch (e) { /* ignore */ }
+        setDarkToggling(false);
+    };
+
+    /* ─── Sidebar content ─── */
     const SidebarContent = ({ isExpanded, onNavClick }) => (
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%', minHeight: 0 }}>
 
@@ -165,7 +184,6 @@ export default function AppLayout({ children }) {
                         <div style={{ color: '#3A4D65', fontSize: 10.5, fontWeight: 500, letterSpacing: '0.01em' }}>Financial OS</div>
                     </div>
                 )}
-                {/* Collapse toggle — only on desktop/tablet sidebar, not mobile overlay */}
                 {onNavClick === null && (
                     <button
                         onClick={() => setCollapsed(v => !v)}
@@ -198,6 +216,7 @@ export default function AppLayout({ children }) {
                         )}
                         {section.items.map(item => {
                             const active = isActive(item.key);
+                            const icon   = I[item.key];
                             return (
                                 <div
                                     key={item.key}
@@ -213,13 +232,13 @@ export default function AppLayout({ children }) {
                                         style={{
                                             justifyContent: isExpanded ? 'flex-start' : 'center',
                                             padding: isExpanded ? '0 10px' : '0',
-                                            height: 36,
-                                            borderRadius: 7,
+                                            height: 36, borderRadius: 7,
+                                            ...(active ? { borderLeft: '3px solid #10B981' } : {}),
                                         }}
                                         onClick={() => onNavClick && onNavClick()}
                                     >
                                         <span style={{ color: active ? '#0F9B73' : '#5C6F8A', flexShrink: 0, display: 'flex' }}>
-                                            {I[item.key]}
+                                            {icon}
                                         </span>
                                         {isExpanded && (
                                             <>
@@ -230,6 +249,13 @@ export default function AppLayout({ children }) {
                                                         fontSize: 10, fontWeight: 700, padding: '1px 7px',
                                                         borderRadius: 99, flexShrink: 0,
                                                     }}>{unread > 9 ? '9+' : unread}</span>
+                                                )}
+                                                {item.key === 'ai-insights' && (
+                                                    <span style={{
+                                                        background: 'rgba(167,139,250,0.15)', color: '#A78BFA',
+                                                        fontSize: 9, fontWeight: 700, padding: '1px 6px',
+                                                        borderRadius: 99, flexShrink: 0, letterSpacing: '0.05em',
+                                                    }}>AI</span>
                                                 )}
                                             </>
                                         )}
@@ -278,30 +304,35 @@ export default function AppLayout({ children }) {
         </div>
     );
 
-    return (
-        <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: '#F7F8FA' }}>
+    const headerBg      = darkMode ? '#0F172A' : '#FFFFFF';
+    const headerBorder  = darkMode ? '#1E293B' : '#E4E8EF';
+    const searchBg      = darkMode ? '#1E293B' : '#F7F8FA';
+    const searchBorder  = darkMode ? '#334155' : '#E4E8EF';
+    const searchColor   = darkMode ? '#64748B' : '#9AAAB8';
+    const btnBg         = darkMode ? '#1E293B' : 'transparent';
+    const btnBorder     = darkMode ? '#334155' : '#E4E8EF';
+    const iconColor     = darkMode ? '#94A3B8' : '#7A8899';
 
-            {/* ── Desktop / Tablet Sidebar (≥768px) ──────────── */}
-            {/* Uses Tailwind "hidden md:flex" — display:none on mobile, display:flex on md+ */}
+    return (
+        <div style={{ display: 'flex', height: '100vh', overflow: 'hidden', background: darkMode ? '#0F172A' : '#F7F8FA' }}>
+
+            {/* ── Desktop / Tablet Sidebar ──────────────────────── */}
             <aside
                 className="hidden md:flex"
                 style={{
                     flexDirection: 'column',
                     width: collapsed ? 64 : 228,
                     background: '#0C1220',
-                    flexShrink: 0,
-                    overflow: 'hidden',
-                    position: 'relative',
-                    zIndex: 10,
+                    flexShrink: 0, overflow: 'hidden',
+                    position: 'relative', zIndex: 10,
                     boxShadow: '1px 0 0 rgba(255,255,255,0.04)',
                     transition: 'width 220ms cubic-bezier(0.4,0,0.2,1)',
                 }}
             >
-                {/* Pass onNavClick=null to signal this is the desktop sidebar (shows toggle button) */}
                 <SidebarContent isExpanded={!collapsed} onNavClick={null} />
             </aside>
 
-            {/* ── Tooltip for collapsed sidebar items ────────── */}
+            {/* ── Tooltip for collapsed sidebar ─────────────────── */}
             {tooltip.show && collapsed && (
                 <div style={{
                     position: 'fixed', left: 72, top: tooltip.top,
@@ -316,7 +347,7 @@ export default function AppLayout({ children }) {
                 </div>
             )}
 
-            {/* ── Mobile overlay sidebar (<768px) ─────────────── */}
+            {/* ── Mobile overlay sidebar ────────────────────────── */}
             <AnimatePresence>
                 {mobileOpen && (
                     <>
@@ -336,28 +367,29 @@ export default function AppLayout({ children }) {
                                 overflow: 'hidden',
                             }}
                         >
-                            {/* Pass onNavClick fn to signal this is mobile (no toggle button, closes on nav) */}
                             <SidebarContent isExpanded={true} onNavClick={() => setMobileOpen(false)} />
                         </motion.aside>
                     </>
                 )}
             </AnimatePresence>
 
-            {/* ── Main area ────────────────────────────────────── */}
+            {/* ── Main area ─────────────────────────────────────── */}
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minWidth: 0, overflow: 'hidden' }}>
 
                 {/* Header */}
                 <header style={{
-                    background: '#FFFFFF', borderBottom: '1px solid #E4E8EF',
+                    background: headerBg,
+                    borderBottom: `1px solid ${headerBorder}`,
                     height: 52, padding: '0 16px',
                     display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0,
                     position: 'relative', zIndex: 30,
+                    transition: 'background 200ms ease, border-color 200ms ease',
                 }}>
-                    {/* Hamburger — ONLY on mobile (<768px). Tailwind md:hidden handles this. */}
+                    {/* Hamburger — mobile only */}
                     <button
                         onClick={() => setMobileOpen(true)}
                         className="md:hidden"
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748B', padding: 4, borderRadius: 7, flexShrink: 0 }}
+                        style={{ background: 'none', border: 'none', cursor: 'pointer', color: iconColor, padding: 4, borderRadius: 7, flexShrink: 0 }}
                     >
                         {I.menu}
                     </button>
@@ -368,19 +400,19 @@ export default function AppLayout({ children }) {
                         style={{
                             display: 'flex', alignItems: 'center', gap: 8,
                             height: 34, minWidth: 40,
-                            background: '#F7F8FA', border: '1px solid #E4E8EF',
+                            background: searchBg, border: `1px solid ${searchBorder}`,
                             borderRadius: 9999, padding: '0 12px', cursor: 'pointer',
-                            color: '#9AAAB8', fontSize: 13, transition: 'all 150ms', flexShrink: 1,
+                            color: searchColor, fontSize: 13, transition: 'all 200ms ease', flexShrink: 1,
                         }}
                     >
                         <span style={{ flexShrink: 0 }}>{I.search}</span>
                         <span className="hidden sm:inline" style={{ flex: 1, whiteSpace: 'nowrap' }}>Search transactions, people…</span>
-                        <span className="hidden sm:inline" style={{ fontSize: 10, color: '#CBD5E1', background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>⌘K</span>
+                        <span className="hidden sm:inline" style={{ fontSize: 10, color: searchColor, background: searchBg, border: `1px solid ${searchBorder}`, borderRadius: 4, padding: '1px 5px', flexShrink: 0 }}>⌘K</span>
                     </button>
 
                     <div style={{ flex: 1 }} />
 
-                    {/* Add Transaction — ONLY on tablet/desktop (≥768px). Tailwind hidden md:inline-flex */}
+                    {/* Add Transaction — tablet/desktop */}
                     <Link
                         href="/transactions/create"
                         className="hidden md:inline-flex btn-primary"
@@ -389,18 +421,37 @@ export default function AppLayout({ children }) {
                         {I.plus} Add Transaction
                     </Link>
 
+                    {/* Dark mode toggle */}
+                    <button
+                        onClick={toggleDarkMode}
+                        title={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+                        style={{
+                            width: 34, height: 34, borderRadius: 7,
+                            border: `1px solid ${btnBorder}`,
+                            background: btnBg,
+                            cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            color: darkMode ? '#FBBF24' : '#64748B',
+                            transition: 'all 200ms ease', flexShrink: 0,
+                        }}
+                        onMouseEnter={e => e.currentTarget.style.background = darkMode ? '#243247' : '#F7F8FA'}
+                        onMouseLeave={e => e.currentTarget.style.background = btnBg}
+                    >
+                        {darkMode ? I.sun : I.moon}
+                    </button>
+
                     {/* Bell */}
                     <div style={{ position: 'relative' }}>
                         <button
                             onClick={() => { setNotifOpen(v => !v); if (!notifOpen) loadNotifications(); }}
                             style={{
-                                width: 34, height: 34, borderRadius: 7, border: '1px solid #E4E8EF',
-                                background: notifOpen ? '#F7F8FA' : 'transparent',
+                                width: 34, height: 34, borderRadius: 7,
+                                border: `1px solid ${btnBorder}`,
+                                background: notifOpen ? (darkMode ? '#243247' : '#F7F8FA') : btnBg,
                                 cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                color: '#7A8899', position: 'relative', transition: 'all 120ms',
+                                color: iconColor, position: 'relative', transition: 'all 200ms ease',
                             }}
-                            onMouseEnter={e => e.currentTarget.style.background = '#F7F8FA'}
-                            onMouseLeave={e => e.currentTarget.style.background = notifOpen ? '#F7F8FA' : 'transparent'}
+                            onMouseEnter={e => e.currentTarget.style.background = darkMode ? '#243247' : '#F7F8FA'}
+                            onMouseLeave={e => e.currentTarget.style.background = notifOpen ? (darkMode ? '#243247' : '#F7F8FA') : btnBg}
                         >
                             {I.bell}
                             {unread > 0 && (
@@ -409,7 +460,7 @@ export default function AppLayout({ children }) {
                                     minWidth: 16, height: 16, background: '#EF4444',
                                     color: '#fff', fontSize: 9, fontWeight: 700,
                                     borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                    padding: '0 4px', border: '2px solid #fff',
+                                    padding: '0 4px', border: '2px solid ' + headerBg,
                                 }}>{unread > 9 ? '9+' : unread}</span>
                             )}
                         </button>
@@ -424,13 +475,16 @@ export default function AppLayout({ children }) {
                                         transition={{ duration: 0.13 }}
                                         style={{
                                             position: 'absolute', right: 0, top: 'calc(100% + 10px)',
-                                            width: 320, background: '#fff', borderRadius: 14,
-                                            boxShadow: '0 8px 24px rgba(15,23,42,0.12)', border: '1px solid #E2E8F0',
+                                            width: 320,
+                                            background: darkMode ? '#1E293B' : '#fff',
+                                            borderRadius: 14,
+                                            boxShadow: darkMode ? '0 8px 24px rgba(0,0,0,0.4)' : '0 8px 24px rgba(15,23,42,0.12)',
+                                            border: `1px solid ${darkMode ? '#334155' : '#E2E8F0'}`,
                                             zIndex: 50, overflow: 'hidden',
                                         }}
                                     >
-                                        <div style={{ padding: '14px 16px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                                            <span style={{ fontWeight: 700, fontSize: 14, color: '#0F172A' }}>Notifications</span>
+                                        <div style={{ padding: '14px 16px', borderBottom: `1px solid ${darkMode ? '#334155' : '#F1F5F9'}`, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                            <span style={{ fontWeight: 700, fontSize: 14, color: darkMode ? '#F1F5F9' : '#0F172A' }}>Notifications</span>
                                             <Link href="/notifications/read-all" method="post" as="button"
                                                 style={{ fontSize: 12, color: '#10B981', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600 }}>
                                                 Mark all read
@@ -441,16 +495,16 @@ export default function AppLayout({ children }) {
                                                 <div style={{ padding: '32px 16px', textAlign: 'center', color: '#94A3B8', fontSize: 13 }}>No notifications</div>
                                             ) : notifications.map(n => (
                                                 <div key={n.id} style={{
-                                                    padding: '12px 16px', borderBottom: '1px solid #F8FAFC',
-                                                    background: !n.is_read ? '#F0FDF4' : '#fff',
+                                                    padding: '12px 16px', borderBottom: `1px solid ${darkMode ? '#243247' : '#F8FAFC'}`,
+                                                    background: !n.is_read ? (darkMode ? 'rgba(16,185,129,0.08)' : '#F0FDF4') : 'transparent',
                                                     borderLeft: !n.is_read ? '3px solid #10B981' : '3px solid transparent',
                                                 }}>
-                                                    <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{n.title}</div>
+                                                    <div style={{ fontSize: 13, fontWeight: 600, color: darkMode ? '#F1F5F9' : '#0F172A' }}>{n.title}</div>
                                                     <div style={{ fontSize: 12, color: '#64748B', marginTop: 2, overflow: 'hidden', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>{n.message}</div>
                                                 </div>
                                             ))}
                                         </div>
-                                        <div style={{ padding: '10px 16px', borderTop: '1px solid #F1F5F9', textAlign: 'center' }}>
+                                        <div style={{ padding: '10px 16px', borderTop: `1px solid ${darkMode ? '#334155' : '#F1F5F9'}`, textAlign: 'center' }}>
                                             <Link href="/notifications" onClick={() => setNotifOpen(false)} style={{ fontSize: 12, color: '#10B981', fontWeight: 600 }}>View all</Link>
                                         </div>
                                     </motion.div>
@@ -462,14 +516,14 @@ export default function AppLayout({ children }) {
                     {/* Avatar */}
                     <Link href="/settings">
                         {user?.profile_photo ? (
-                            <img src={user.profile_photo} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid #E2E8F0', display: 'block' }} alt="" />
+                            <img src={user.profile_photo} style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: `2px solid ${darkMode ? '#334155' : '#E2E8F0'}`, display: 'block' }} alt="" />
                         ) : (
                             <div style={{
                                 width: 34, height: 34, borderRadius: '50%',
                                 background: 'linear-gradient(135deg,#6366F1,#8B5CF6)',
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 color: '#fff', fontSize: 13, fontWeight: 700,
-                                border: '2px solid #E2E8F0', cursor: 'pointer',
+                                border: `2px solid ${darkMode ? '#334155' : '#E2E8F0'}`, cursor: 'pointer',
                             }}>{initials}</div>
                         )}
                     </Link>
@@ -487,21 +541,22 @@ export default function AppLayout({ children }) {
                     </motion.div>
                 </main>
 
-                {/* ── Mobile bottom nav — ONLY on mobile (<768px) ── */}
-                {/* Uses Tailwind "flex md:hidden" — flex on mobile, none on md+ */}
+                {/* ── Mobile bottom nav ── */}
                 <nav
                     className="flex md:hidden"
                     style={{
                         position: 'fixed', bottom: 0, left: 0, right: 0,
-                        background: '#FFFFFF', borderTop: '1px solid #E4E8EF',
+                        background: darkMode ? '#0C1628' : '#FFFFFF',
+                        borderTop: `1px solid ${darkMode ? '#1E293B' : '#E4E8EF'}`,
                         zIndex: 30, boxShadow: '0 -1px 0 #E4E8EF, 0 -4px 12px rgba(13,17,23,0.04)',
                         paddingBottom: 'env(safe-area-inset-bottom)',
+                        transition: 'background 200ms ease, border-color 200ms ease',
                     }}
                 >
                     {MOBILE_NAV.map(item => (
                         item.isMore ? (
                             <button key="more" onClick={() => setMoreOpen(true)}
-                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 0', minHeight: 54, background: 'none', border: 'none', cursor: 'pointer', color: '#9AAAB8', fontFamily: 'inherit' }}>
+                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 0', minHeight: 54, background: 'none', border: 'none', cursor: 'pointer', color: darkMode ? '#64748B' : '#9AAAB8', fontFamily: 'inherit' }}>
                                 {I.grid}
                                 <span style={{ fontSize: 10, fontWeight: 500 }}>More</span>
                             </button>
@@ -513,11 +568,11 @@ export default function AppLayout({ children }) {
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     marginTop: -16, boxShadow: '0 4px 14px rgba(10,126,94,0.40)', color: '#fff',
                                 }}>{I.plus}</div>
-                                <span style={{ fontSize: 10, color: '#9AAAB8', fontWeight: 500, marginTop: 3 }}>Add</span>
+                                <span style={{ fontSize: 10, color: darkMode ? '#64748B' : '#9AAAB8', fontWeight: 500, marginTop: 3 }}>Add</span>
                             </Link>
                         ) : (
                             <Link key={item.key} href={item.href}
-                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 0', minHeight: 54, color: isActive(item.key) ? '#0A7E5E' : '#9AAAB8' }}>
+                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 0', minHeight: 54, color: isActive(item.key) ? '#0A7E5E' : (darkMode ? '#64748B' : '#9AAAB8') }}>
                                 {I[item.icon]}
                                 <span style={{ fontSize: 10, fontWeight: isActive(item.key) ? 600 : 500 }}>{item.label}</span>
                             </Link>
@@ -536,13 +591,16 @@ export default function AppLayout({ children }) {
                             <motion.div
                                 initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
                                 transition={{ type: 'spring', stiffness: 300, damping: 32 }}
+                                className="more-drawer"
                                 style={{
                                     position: 'fixed', bottom: 0, left: 0, right: 0,
-                                    background: '#fff', borderRadius: '20px 20px 0 0',
+                                    background: darkMode ? '#1E293B' : '#fff',
+                                    borderRadius: '20px 20px 0 0',
                                     zIndex: 50, padding: '20px 16px 40px',
+                                    transition: 'background 200ms ease',
                                 }}
                             >
-                                <div style={{ width: 36, height: 4, background: '#E2E8F0', borderRadius: 99, margin: '0 auto 24px' }} />
+                                <div style={{ width: 36, height: 4, background: darkMode ? '#334155' : '#E2E8F0', borderRadius: 99, margin: '0 auto 24px' }} />
                                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
                                     {[
                                         { name: 'People',        href: '/people',        key: 'people' },
@@ -551,19 +609,21 @@ export default function AppLayout({ children }) {
                                         { name: 'Subscriptions', href: '/subscriptions', key: 'subscriptions' },
                                         { name: 'Reports',       href: '/reports',       key: 'reports' },
                                         { name: 'Budgets',       href: '/budgets',       key: 'budgets' },
+                                        { name: 'AI Insights',   href: '/ai-insights',   key: 'ai-insights' },
                                         { name: 'Settings',      href: '/settings',      key: 'settings' },
-                                        { name: 'Notifications', href: '/notifications', key: 'notifications' },
                                     ].map(item => (
                                         <Link key={item.key} href={item.href} onClick={() => setMoreOpen(false)}
                                             style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
                                             <div style={{
                                                 width: 52, height: 52, borderRadius: 14, minHeight: 44,
                                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                                background: isActive(item.key) ? '#ECFDF5' : '#F8FAFC',
-                                                color: isActive(item.key) ? '#10B981' : '#475569',
-                                                border: `1.5px solid ${isActive(item.key) ? '#A7F3D0' : '#E2E8F0'}`,
+                                                background: isActive(item.key)
+                                                    ? (darkMode ? 'rgba(16,185,129,0.15)' : '#ECFDF5')
+                                                    : (darkMode ? '#243247' : '#F8FAFC'),
+                                                color: isActive(item.key) ? '#10B981' : (darkMode ? '#94A3B8' : '#475569'),
+                                                border: `1.5px solid ${isActive(item.key) ? (darkMode ? 'rgba(16,185,129,0.3)' : '#A7F3D0') : (darkMode ? '#334155' : '#E2E8F0')}`,
                                             }}>{I[item.key]}</div>
-                                            <span style={{ fontSize: 11, color: '#64748B', fontWeight: 500, textAlign: 'center', lineHeight: 1.3 }}>{item.name}</span>
+                                            <span style={{ fontSize: 11, color: darkMode ? '#64748B' : '#64748B', fontWeight: 500, textAlign: 'center', lineHeight: 1.3 }}>{item.name}</span>
                                         </Link>
                                     ))}
                                 </div>
@@ -586,25 +646,14 @@ export default function AppLayout({ children }) {
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.96, y: -12 }}
                             transition={{ duration: 0.14 }}
-                            style={{
-                                position: 'fixed',
-                                top: '15vh',
-                                /* left: 50% + translateX(-50%) + width calc = correct centering on all sizes,
-                                   and on narrow phones the 16px gap from each edge is guaranteed */
-                                left: '50%',
-                                transform: 'translateX(-50%)',
-                                width: 'calc(100% - 32px)',
-                                maxWidth: 560,
-                                zIndex: 70,
-                                boxSizing: 'border-box',
-                            }}
+                            style={{ position: 'fixed', top: '15vh', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: 560, zIndex: 70, boxSizing: 'border-box' }}
                         >
-                            <div style={{ background: '#fff', borderRadius: 16, boxShadow: '0 20px 60px rgba(15,23,42,0.20)', overflow: 'hidden', border: '1px solid #E2E8F0' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderBottom: '1px solid #F1F5F9' }}>
+                            <div style={{ background: darkMode ? '#1E293B' : '#fff', borderRadius: 16, boxShadow: '0 20px 60px rgba(15,23,42,0.20)', overflow: 'hidden', border: `1px solid ${darkMode ? '#334155' : '#E2E8F0'}` }}>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderBottom: `1px solid ${darkMode ? '#334155' : '#F1F5F9'}` }}>
                                     <span style={{ color: '#94A3B8', flexShrink: 0 }}>{I.search}</span>
                                     <input id="global-search" type="text" value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
                                         placeholder="Search transactions, people, loans…"
-                                        style={{ flex: 1, border: 'none', outline: 'none', fontSize: 15, color: '#0F172A', fontFamily: 'inherit', background: 'transparent' }}
+                                        style={{ flex: 1, border: 'none', outline: 'none', fontSize: 15, color: darkMode ? '#F1F5F9' : '#0F172A', fontFamily: 'inherit', background: 'transparent' }}
                                         autoFocus
                                     />
                                     <button onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
@@ -618,8 +667,8 @@ export default function AppLayout({ children }) {
                                     <div style={{ maxHeight: 360, overflowY: 'auto' }}>
                                         {searchResults.map((r, i) => (
                                             <a key={i} href={r.url}
-                                                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: '1px solid #F8FAFC', textDecoration: 'none', transition: 'background 150ms' }}
-                                                onMouseEnter={e => e.currentTarget.style.background = '#F8FAFC'}
+                                                style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderBottom: `1px solid ${darkMode ? '#243247' : '#F8FAFC'}`, textDecoration: 'none', transition: 'background 150ms' }}
+                                                onMouseEnter={e => e.currentTarget.style.background = darkMode ? '#243247' : '#F8FAFC'}
                                                 onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
                                                 onClick={() => setSearchOpen(false)}
                                             >
@@ -630,7 +679,7 @@ export default function AppLayout({ children }) {
                                                     color: r.type === 'transaction' ? (r.transaction_type === 'income' ? '#065F46' : '#991B1B') : '#5B21B6',
                                                 }}>{r.type[0].toUpperCase()}</div>
                                                 <div>
-                                                    <div style={{ fontSize: 14, fontWeight: 600, color: '#0F172A' }}>{r.title}</div>
+                                                    <div style={{ fontSize: 14, fontWeight: 600, color: darkMode ? '#F1F5F9' : '#0F172A' }}>{r.title}</div>
                                                     <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 1 }}>{r.subtitle}</div>
                                                 </div>
                                             </a>
@@ -647,13 +696,13 @@ export default function AppLayout({ children }) {
                                                 { label: 'Transactions', href: '/transactions' },
                                                 { label: 'Add Transaction', href: '/transactions/create' },
                                                 { label: 'Accounts', href: '/accounts' },
-                                                { label: 'People', href: '/people' },
+                                                { label: 'AI Insights', href: '/ai-insights' },
                                                 { label: 'Reports', href: '/reports' },
                                             ].map(item => (
                                                 <a key={item.label} href={item.href} onClick={() => setSearchOpen(false)}
-                                                    style={{ padding: '6px 12px', background: '#F1F5F9', borderRadius: 8, fontSize: 13, color: '#475569', fontWeight: 500, textDecoration: 'none', transition: 'all 150ms' }}
-                                                    onMouseEnter={e => { e.currentTarget.style.background = '#E2E8F0'; e.currentTarget.style.color = '#0F172A'; }}
-                                                    onMouseLeave={e => { e.currentTarget.style.background = '#F1F5F9'; e.currentTarget.style.color = '#475569'; }}
+                                                    style={{ padding: '6px 12px', background: darkMode ? '#243247' : '#F1F5F9', borderRadius: 8, fontSize: 13, color: darkMode ? '#94A3B8' : '#475569', fontWeight: 500, textDecoration: 'none', transition: 'all 150ms' }}
+                                                    onMouseEnter={e => { e.currentTarget.style.background = darkMode ? '#334155' : '#E2E8F0'; }}
+                                                    onMouseLeave={e => { e.currentTarget.style.background = darkMode ? '#243247' : '#F1F5F9'; }}
                                                 >{item.label}</a>
                                             ))}
                                         </div>

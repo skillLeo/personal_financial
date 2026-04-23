@@ -5,6 +5,7 @@ import ConfirmModal from '@/Components/ConfirmModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import ExportButton from '@/Components/ExportButton';
 
 const PlusIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
 const XIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
@@ -76,9 +77,12 @@ export default function EmployeesIndex({ employees, accounts }) {
                         {employees?.filter(e => e.status === 'active').length || 0} active &nbsp;·&nbsp; Monthly payroll: <strong>Rs. {totalPayroll.toLocaleString()}</strong>
                     </p>
                 </div>
-                <button onClick={openCreate} className="btn btn-primary">
-                    <PlusIcon /> Add Employee
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <ExportButton baseUrl="/export/employees" filters={{}} />
+                    <button onClick={openCreate} className="btn btn-primary">
+                        <PlusIcon /> Add Employee
+                    </button>
+                </div>
             </div>
 
             {employees?.length === 0 ? (

@@ -5,6 +5,7 @@ import ConfirmModal from '@/Components/ConfirmModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import ExportButton from '@/Components/ExportButton';
 
 const PlusIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -132,9 +133,12 @@ export default function LoansIndex({ given_loans, taken_loans, summary, people }
                     <h1 className="page-title">Loans</h1>
                     <p className="page-subtitle">Track money lent and borrowed</p>
                 </div>
-                <button onClick={() => setShowAddForm(true)} className="btn-primary">
-                    <PlusIcon /> New Loan
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <ExportButton baseUrl="/export/loans" filters={{}} />
+                    <button onClick={() => setShowAddForm(true)} className="btn-primary">
+                        <PlusIcon /> New Loan
+                    </button>
+                </div>
             </div>
 
             {/* Summary stats */}

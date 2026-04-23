@@ -7,14 +7,38 @@ use Inertia\Inertia;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Intervention\Image\Laravel\Facades\Image;
+use App\Models\BackupSetting;
+use App\Models\AiSetting;
 
 class ProfileController extends Controller
 {
     public function show(Request $request)
     {
+        $user        = $request->user();
+        $backupSettings = BackupSetting::firstOrCreate(
+            ['user_id' => $user->id],
+            ['schedule' => 'manual', 'backup_time' => '02:00', 'max_backups' => 30]
+        );
+        $aiSetting = AiSetting::where('user_id', $user->id)->first();
+
         return Inertia::render('Settings/Index', [
-            'user' => $request->user(),
+            'user'           => $user,
+            'backupSettings' => $backupSettings,
+            'aiSetting'      => $aiSetting ? [
+                'provider'        => $aiSetting->provider,
+                'model'           => $aiSetting->model,
+                'custom_endpoint' => $aiSetting->custom_endpoint,
+                'is_enabled'      => $aiSetting->is_enabled,
+                'has_key'         => !empty($aiSetting->getRawOriginal('api_key')),
+            ] : null,
         ]);
+    }
+
+    public function toggleDarkMode(Request $request)
+    {
+        $user = $request->user();
+        $user->update(['dark_mode' => !$user->dark_mode]);
+        return response()->json(['dark_mode' => $user->dark_mode]);
     }
 
     public function updateProfile(Request $request)

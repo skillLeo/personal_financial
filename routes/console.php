@@ -10,6 +10,7 @@ use App\Models\Transaction;
 use App\Models\Account;
 use App\Models\Category;
 use App\Models\NotificationLog;
+use App\Models\BackupSetting;
 
 Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
@@ -116,3 +117,34 @@ Schedule::call(function () {
         ]);
     }
 })->weekly()->mondays()->name('weekly-digest');
+
+// Dynamic scheduled backups — reads each user's backup schedule from DB
+Schedule::call(function () {
+    $settings = BackupSetting::where('schedule', '!=', 'manual')->get();
+    foreach ($settings as $setting) {
+        $now = now();
+        $shouldRun = false;
+
+        if ($setting->schedule === 'daily') {
+            [$h, $m] = explode(':', $setting->backup_time ?? '02:00');
+            $shouldRun = (int)$now->format('H') === (int)$h && (int)$now->format('i') < 15;
+        } elseif ($setting->schedule === 'weekly') {
+            [$h, $m] = explode(':', $setting->backup_time ?? '02:00');
+            $shouldRun = $now->dayOfWeek === (int)($setting->backup_day ?? 0)
+                && (int)$now->format('H') === (int)$h
+                && (int)$now->format('i') < 15;
+        } elseif ($setting->schedule === 'monthly') {
+            [$h, $m] = explode(':', $setting->backup_time ?? '02:00');
+            $shouldRun = $now->day === (int)($setting->backup_day ?? 1)
+                && (int)$now->format('H') === (int)$h
+                && (int)$now->format('i') < 15;
+        }
+
+        if ($shouldRun) {
+            \Illuminate\Support\Facades\Artisan::call('backup:create', [
+                '--user' => $setting->user_id,
+                '--type' => 'scheduled',
+            ]);
+        }
+    }
+})->everyFifteenMinutes()->name('scheduled-backups');

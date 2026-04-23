@@ -5,6 +5,7 @@ import ConfirmModal from '@/Components/ConfirmModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import ExportButton from '@/Components/ExportButton';
 
 const PlusIcon = () => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -157,9 +158,12 @@ export default function SubscriptionsIndex({ subscriptions, monthly_total, accou
                     <h1 className="page-title">Subscriptions</h1>
                     <p className="page-subtitle">Monthly cost: <strong style={{ color: '#EF4444' }}>{monthly_total}</strong></p>
                 </div>
-                <button onClick={openCreate} className="btn-primary">
-                    <PlusIcon /> Add Subscription
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <ExportButton baseUrl="/export/subscriptions" filters={{}} />
+                    <button onClick={openCreate} className="btn-primary">
+                        <PlusIcon /> Add Subscription
+                    </button>
+                </div>
             </div>
 
             {subscriptions?.length === 0 ? (

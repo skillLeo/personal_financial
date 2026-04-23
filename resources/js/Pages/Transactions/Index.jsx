@@ -3,6 +3,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import ConfirmModal from '@/Components/ConfirmModal';
 import PhotoGalleryModal from '@/Components/PhotoGalleryModal';
+import ExportButton from '@/Components/ExportButton';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
 
@@ -50,9 +51,12 @@ export default function TransactionsIndex({ transactions, filters, summary, acco
                     <h1 className="page-title">Transactions</h1>
                     <p className="page-subtitle">{summary?.count || 0} records found</p>
                 </div>
-                <Link href="/transactions/create" className="btn btn-primary">
-                    <PlusIcon /> Add Transaction
-                </Link>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <ExportButton baseUrl="/export/transactions" filters={localFilters} />
+                    <Link href="/transactions/create" className="btn btn-primary">
+                        <PlusIcon /> Add Transaction
+                    </Link>
+                </div>
             </div>
 
             {/* Summary */}

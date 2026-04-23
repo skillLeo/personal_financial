@@ -5,6 +5,7 @@ import ConfirmModal from '@/Components/ConfirmModal';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useForm } from '@inertiajs/react';
 import toast from 'react-hot-toast';
+import ExportButton from '@/Components/ExportButton';
 
 const PlusIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>;
 const XIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
@@ -78,9 +79,12 @@ export default function BudgetsIndex({ budgets, categories }) {
                     <h1 className="page-title">Budgets & Limits</h1>
                     <p className="page-subtitle">Set spending limits to stay in control</p>
                 </div>
-                <button onClick={openCreate} className="btn btn-primary">
-                    <PlusIcon /> New Budget
-                </button>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <ExportButton baseUrl="/export/budgets" filters={{}} />
+                    <button onClick={openCreate} className="btn btn-primary">
+                        <PlusIcon /> New Budget
+                    </button>
+                </div>
             </div>
 
             {budgets?.length === 0 ? (
