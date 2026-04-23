@@ -1,0 +1,249 @@
+{
+  "_AppLayout-COIyAtcI.js": {
+    "file": "assets/AppLayout-COIyAtcI.js",
+    "name": "AppLayout",
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "resources/js/app.jsx"
+    ]
+  },
+  "_BarChart-Ccm5ttgJ.js": {
+    "file": "assets/BarChart-Ccm5ttgJ.js",
+    "name": "BarChart",
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js"
+    ]
+  },
+  "_ExportButton-BOMIZE_7.js": {
+    "file": "assets/ExportButton-BOMIZE_7.js",
+    "name": "ExportButton",
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js"
+    ]
+  },
+  "_jsx-runtime-C11HiuYV.js": {
+    "file": "assets/jsx-runtime-C11HiuYV.js",
+    "name": "jsx-runtime"
+  },
+  "resources/js/Pages/AIInsights/Index.jsx": {
+    "file": "assets/Index-DFYDD8Hy.js",
+    "name": "Index",
+    "src": "resources/js/Pages/AIInsights/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/Pages/Accounts/Index.jsx": {
+    "file": "assets/Index-BY2VhYrK.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Accounts/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/Pages/Accounts/Statement.jsx": {
+    "file": "assets/Statement-BOC8JK1C.js",
+    "name": "Statement",
+    "src": "resources/js/Pages/Accounts/Statement.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js"
+    ]
+  },
+  "resources/js/Pages/Auth/Login.jsx": {
+    "file": "assets/Login-C7LCRR9I.js",
+    "name": "Login",
+    "src": "resources/js/Pages/Auth/Login.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js"
+    ]
+  },
+  "resources/js/Pages/Budgets/Index.jsx": {
+    "file": "assets/Index-0XoCJ-WR.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Budgets/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/Pages/Dashboard.jsx": {
+    "file": "assets/Dashboard-v3IkkFB0.js",
+    "name": "Dashboard",
+    "src": "resources/js/Pages/Dashboard.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_BarChart-Ccm5ttgJ.js",
+      "_AppLayout-COIyAtcI.js"
+    ]
+  },
+  "resources/js/Pages/Employees/History.jsx": {
+    "file": "assets/History-CXlSIyxJ.js",
+    "name": "History",
+    "src": "resources/js/Pages/Employees/History.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js"
+    ]
+  },
+  "resources/js/Pages/Employees/Index.jsx": {
+    "file": "assets/Index-B00nEsn6.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Employees/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/Pages/Loans/Index.jsx": {
+    "file": "assets/Index-qPTJr1MU.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Loans/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/Pages/Notifications/Index.jsx": {
+    "file": "assets/Index-DCJfldsn.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Notifications/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/Pages/People/Index.jsx": {
+    "file": "assets/Index-DUsyEW41.js",
+    "name": "Index",
+    "src": "resources/js/Pages/People/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/Pages/People/Show.jsx": {
+    "file": "assets/Show-DXJaq6wK.js",
+    "name": "Show",
+    "src": "resources/js/Pages/People/Show.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js"
+    ]
+  },
+  "resources/js/Pages/Reports/Index.jsx": {
+    "file": "assets/Index-d_6NuK_q.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Reports/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_BarChart-Ccm5ttgJ.js",
+      "_AppLayout-COIyAtcI.js"
+    ]
+  },
+  "resources/js/Pages/Settings/Index.jsx": {
+    "file": "assets/Index-CjwzlUdZ.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Settings/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/Pages/Subscriptions/Index.jsx": {
+    "file": "assets/Index-DYXUfybq.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Subscriptions/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/Pages/Transactions/Form.jsx": {
+    "file": "assets/Form-BX7Qw9Bn.js",
+    "name": "Form",
+    "src": "resources/js/Pages/Transactions/Form.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx"
+    ]
+  },
+  "resources/js/Pages/Transactions/Index.jsx": {
+    "file": "assets/Index-DTHoisPH.js",
+    "name": "Index",
+    "src": "resources/js/Pages/Transactions/Index.jsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js",
+      "_AppLayout-COIyAtcI.js",
+      "resources/js/app.jsx",
+      "_ExportButton-BOMIZE_7.js"
+    ]
+  },
+  "resources/js/app.jsx": {
+    "file": "assets/app-BFKo3s1r.js",
+    "name": "app",
+    "src": "resources/js/app.jsx",
+    "isEntry": true,
+    "imports": [
+      "_jsx-runtime-C11HiuYV.js"
+    ],
+    "dynamicImports": [
+      "resources/js/Pages/AIInsights/Index.jsx",
+      "resources/js/Pages/Accounts/Index.jsx",
+      "resources/js/Pages/Accounts/Statement.jsx",
+      "resources/js/Pages/Auth/Login.jsx",
+      "resources/js/Pages/Budgets/Index.jsx",
+      "resources/js/Pages/Dashboard.jsx",
+      "resources/js/Pages/Employees/History.jsx",
+      "resources/js/Pages/Employees/Index.jsx",
+      "resources/js/Pages/Loans/Index.jsx",
+      "resources/js/Pages/Notifications/Index.jsx",
+      "resources/js/Pages/People/Index.jsx",
+      "resources/js/Pages/People/Show.jsx",
+      "resources/js/Pages/Reports/Index.jsx",
+      "resources/js/Pages/Settings/Index.jsx",
+      "resources/js/Pages/Subscriptions/Index.jsx",
+      "resources/js/Pages/Transactions/Form.jsx",
+      "resources/js/Pages/Transactions/Index.jsx"
+    ],
+    "css": [
+      "assets/app-C3wyQjGM.css"
+    ]
+  }
+}
