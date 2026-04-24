@@ -17,8 +17,14 @@ use App\Http\Controllers\Api\SettingsController;
 use App\Http\Controllers\Api\AIInsightsController;
 use App\Http\Controllers\Api\DraftController;
 use App\Http\Controllers\Api\BackupController;
+use App\Http\Controllers\Api\DeviceController;
+use App\Http\Controllers\Api\PreferencesController;
+use App\Http\Controllers\Api\AppController;
 
 Route::prefix('v1')->middleware('throttle:api')->group(function () {
+
+    /* ── App Version (public) ──────────────────────────── */
+    Route::get('/app/version', [AppController::class, 'version']);
 
     /* ── Public Auth ───────────────────────────────────── */
     Route::prefix('auth')->group(function () {
@@ -179,6 +185,18 @@ Route::prefix('v1')->middleware('throttle:api')->group(function () {
             Route::get('/',              [BackupController::class, 'index']);
             Route::post('/',             [BackupController::class, 'create']);
             Route::delete('/{filename}', [BackupController::class, 'destroy']);
+        });
+
+        /* Device Tokens (Push Notifications) */
+        Route::prefix('devices')->group(function () {
+            Route::post('/register',   [DeviceController::class, 'register']);
+            Route::post('/unregister', [DeviceController::class, 'unregister']);
+        });
+
+        /* User Preferences */
+        Route::prefix('preferences')->group(function () {
+            Route::get('/',  [PreferencesController::class, 'show']);
+            Route::put('/',  [PreferencesController::class, 'update']);
         });
     });
 });
