@@ -15,7 +15,7 @@ class ProfileController extends Controller
 {
     public function show(Request $request)
     {
-        $user        = $request->user();
+        $user           = $request->user();
         $backupSettings = BackupSetting::firstOrCreate(
             ['user_id' => $user->id],
             ['schedule' => 'manual', 'backup_time' => '02:00', 'max_backups' => 30]
@@ -32,7 +32,30 @@ class ProfileController extends Controller
                 'is_enabled'      => $aiSetting->is_enabled,
                 'has_key'         => !empty($aiSetting->getRawOriginal('api_key')),
             ] : null,
+            'security' => [
+                'last_login_at'  => $user->last_login_at?->format('d M Y, H:i'),
+                'last_login_ip'  => $user->last_login_ip,
+                'has_google'     => (bool) $user->google_id,
+                'has_password'   => !empty($user->getAuthPassword()),
+            ],
         ]);
+    }
+
+    public function disconnectGoogle(Request $request)
+    {
+        $user = $request->user();
+
+        if (!$user->google_id) {
+            return back()->withErrors(['google' => 'No Google account is connected.']);
+        }
+
+        // Must have a password set before disconnecting Google
+        if (!$user->password || $user->password === '') {
+            return back()->withErrors(['google' => 'Please set a password before disconnecting Google.']);
+        }
+
+        $user->update(['google_id' => null]);
+        return back()->with('success', 'Google account disconnected.');
     }
 
     public function toggleDarkMode(Request $request)
@@ -71,7 +94,8 @@ class ProfileController extends Controller
                         ->encode(new JpegEncoder(quality: 85));
         Storage::disk('public')->put($filename, (string) $encoded);
 
-        $user->update(['profile_photo' => $filename]);
+        // Clear avatar_url so uploaded photo takes precedence
+        $user->update(['profile_photo' => $filename, 'avatar_url' => null]);
         return back()->with('success', 'Profile photo updated.');
     }
 

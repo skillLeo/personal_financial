@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+import QuickCapture from '@/Components/QuickCapture';
 
 /* ── Icons ─────────────────────────────────────────────────── */
 const I = {
@@ -68,11 +69,11 @@ const NAV_SECTIONS = [
 ];
 
 const MOBILE_NAV = [
-    { key: 'dashboard',    href: '/',                   icon: 'home',         label: 'Home' },
-    { key: 'transactions', href: '/transactions',        icon: 'transactions', label: 'Txns' },
-    { key: 'add',          href: '/transactions/create', isAdd: true },
-    { key: 'accounts',     href: '/accounts',            icon: 'accounts',     label: 'Accounts' },
-    { key: 'more',         isMore: true,                 icon: 'grid',         label: 'More' },
+    { key: 'dashboard',    href: '/',            icon: 'home',         label: 'Home' },
+    { key: 'transactions', href: '/transactions', icon: 'transactions', label: 'Txns' },
+    { key: 'add',          isAdd: true },
+    { key: 'quick',        isQuick: true },
+    { key: 'more',         isMore: true,         icon: 'grid',         label: 'More' },
 ];
 
 export default function AppLayout({ children }) {
@@ -90,6 +91,8 @@ export default function AppLayout({ children }) {
     const [tooltip, setTooltip]             = useState({ show: false, text: '', top: 0 });
     const [darkMode, setDarkMode]           = useState(() => document.documentElement.classList.contains('dark'));
     const [darkToggling, setDarkToggling]   = useState(false);
+    const [quickCaptureOpen, setQuickCaptureOpen] = useState(false);
+    const [draftCount, setDraftCount]       = useState(0);
 
     const currentUrl = usePage().url;
     const user       = auth?.user;
@@ -103,6 +106,29 @@ export default function AppLayout({ children }) {
         window.addEventListener('resize', onResize);
         return () => window.removeEventListener('resize', onResize);
     }, []);
+
+    // Keyboard shortcut Q for Quick Capture (when not typing in an input)
+    useEffect(() => {
+        const handler = (e) => {
+            if (e.key === 'q' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName)) {
+                e.preventDefault();
+                setQuickCaptureOpen(true);
+            }
+        };
+        window.addEventListener('keydown', handler);
+        return () => window.removeEventListener('keydown', handler);
+    }, []);
+
+    // Load draft count
+    useEffect(() => {
+        const loadDraftCount = () => {
+            fetch('/drafts/count', { headers: { Accept: 'application/json', 'X-Requested-With': 'XMLHttpRequest' } })
+                .then(r => r.ok ? r.json() : null)
+                .then(d => { if (d?.count !== undefined) setDraftCount(d.count); })
+                .catch(() => {});
+        };
+        loadDraftCount();
+    }, [quickCaptureOpen]);
 
     useEffect(() => {
         if (flash?.success) toast.success(flash.success);
@@ -249,6 +275,13 @@ export default function AppLayout({ children }) {
                                                         fontSize: 10, fontWeight: 700, padding: '1px 7px',
                                                         borderRadius: 99, flexShrink: 0,
                                                     }}>{unread > 9 ? '9+' : unread}</span>
+                                                )}
+                                                {item.key === 'transactions' && draftCount > 0 && (
+                                                    <span style={{
+                                                        background: 'rgba(245,158,11,0.18)', color: '#F59E0B',
+                                                        fontSize: 10, fontWeight: 700, padding: '1px 7px',
+                                                        borderRadius: 99, flexShrink: 0,
+                                                    }}>{draftCount > 9 ? '9+' : draftCount}</span>
                                                 )}
                                                 {item.key === 'ai-insights' && (
                                                     <span style={{
@@ -412,6 +445,24 @@ export default function AppLayout({ children }) {
 
                     <div style={{ flex: 1 }} />
 
+                    {/* Quick Capture — desktop shortcut */}
+                    <button
+                        onClick={() => setQuickCaptureOpen(true)}
+                        className="hidden md:inline-flex"
+                        title="Quick Capture (Q)"
+                        style={{ gap: 7, alignItems: 'center', fontSize: 13, padding: '7px 13px', whiteSpace: 'nowrap', borderRadius: 8, border: `1px solid ${btnBorder}`, background: btnBg, color: iconColor, cursor: 'pointer', fontFamily: 'inherit', fontWeight: 600, transition: 'all 150ms', position: 'relative' }}
+                        onMouseEnter={e => e.currentTarget.style.background = darkMode ? '#243247' : '#F7F8FA'}
+                        onMouseLeave={e => e.currentTarget.style.background = btnBg}
+                    >
+                        {I.plus} Quick
+                        <span style={{ fontSize: 10, color: iconColor, background: darkMode ? '#334155' : '#F1F5F9', border: `1px solid ${btnBorder}`, borderRadius: 4, padding: '1px 5px', marginLeft: 2 }}>Q</span>
+                        {draftCount > 0 && (
+                            <span style={{ position: 'absolute', top: -4, right: -4, minWidth: 16, height: 16, background: '#F59E0B', color: '#fff', fontSize: 9, fontWeight: 700, borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 4px', border: '2px solid ' + headerBg }}>
+                                {draftCount > 9 ? '9+' : draftCount}
+                            </span>
+                        )}
+                    </button>
+
                     {/* Add Transaction — tablet/desktop */}
                     <Link
                         href="/transactions/create"
@@ -561,15 +612,30 @@ export default function AppLayout({ children }) {
                                 <span style={{ fontSize: 10, fontWeight: 500 }}>More</span>
                             </button>
                         ) : item.isAdd ? (
-                            <Link key="add" href="/transactions/create"
-                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, padding: '8px 0' }}>
+                            <button key="add" onClick={() => setQuickCaptureOpen(true)}
+                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 0, padding: '8px 0', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}>
                                 <div style={{
                                     width: 44, height: 44, background: '#0A7E5E', borderRadius: '50%',
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                                     marginTop: -16, boxShadow: '0 4px 14px rgba(10,126,94,0.40)', color: '#fff',
                                 }}>{I.plus}</div>
-                                <span style={{ fontSize: 10, color: darkMode ? '#64748B' : '#9AAAB8', fontWeight: 500, marginTop: 3 }}>Add</span>
-                            </Link>
+                                <span style={{ fontSize: 10, color: darkMode ? '#64748B' : '#9AAAB8', fontWeight: 500, marginTop: 3 }}>Capture</span>
+                            </button>
+                        ) : item.isQuick ? (
+                            <button key="quick" onClick={() => setQuickCaptureOpen(true)}
+                                style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 0', minHeight: 54, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', position: 'relative' }}>
+                                <div style={{ position: 'relative' }}>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={darkMode ? '#F59E0B' : '#D97706'} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                    </svg>
+                                    {draftCount > 0 && (
+                                        <span style={{ position: 'absolute', top: -4, right: -6, minWidth: 14, height: 14, background: '#F59E0B', color: '#fff', fontSize: 8, fontWeight: 700, borderRadius: 99, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 3px' }}>
+                                            {draftCount > 9 ? '9+' : draftCount}
+                                        </span>
+                                    )}
+                                </div>
+                                <span style={{ fontSize: 10, fontWeight: 600, color: darkMode ? '#F59E0B' : '#D97706' }}>Quick</span>
+                            </button>
                         ) : (
                             <Link key={item.key} href={item.href}
                                 style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3, padding: '10px 0', minHeight: 54, color: isActive(item.key) ? '#0A7E5E' : (darkMode ? '#64748B' : '#9AAAB8') }}>
@@ -601,8 +667,9 @@ export default function AppLayout({ children }) {
                                 }}
                             >
                                 <div style={{ width: 36, height: 4, background: darkMode ? '#334155' : '#E2E8F0', borderRadius: 99, margin: '0 auto 24px' }} />
-                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 12 }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
                                     {[
+                                        { name: 'Accounts',      href: '/accounts',      key: 'accounts' },
                                         { name: 'People',        href: '/people',        key: 'people' },
                                         { name: 'Loans',         href: '/loans',         key: 'loans' },
                                         { name: 'Employees',     href: '/employees',     key: 'employees' },
@@ -633,6 +700,13 @@ export default function AppLayout({ children }) {
                 </AnimatePresence>
             </div>
 
+            {/* Quick Capture Modal */}
+            <QuickCapture
+                open={quickCaptureOpen}
+                onClose={() => setQuickCaptureOpen(false)}
+                onSaved={() => setDraftCount(c => c + 1)}
+            />
+
             {/* Global Search Modal */}
             <AnimatePresence>
                 {searchOpen && (
@@ -641,12 +715,13 @@ export default function AppLayout({ children }) {
                             style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.6)', backdropFilter: 'blur(4px)', zIndex: 60 }}
                             onClick={() => { setSearchOpen(false); setSearchQuery(''); }}
                         />
+                        <div style={{ position: 'fixed', top: '15vh', left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 70, padding: '0 16px', pointerEvents: 'none' }}>
                         <motion.div
                             initial={{ opacity: 0, scale: 0.96, y: -12 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.96, y: -12 }}
                             transition={{ duration: 0.14 }}
-                            style={{ position: 'fixed', top: '15vh', left: '50%', transform: 'translateX(-50%)', width: 'calc(100% - 32px)', maxWidth: 560, zIndex: 70, boxSizing: 'border-box' }}
+                            style={{ width: '100%', maxWidth: 560, boxSizing: 'border-box', pointerEvents: 'auto' }}
                         >
                             <div style={{ background: darkMode ? '#1E293B' : '#fff', borderRadius: 16, boxShadow: '0 20px 60px rgba(15,23,42,0.20)', overflow: 'hidden', border: `1px solid ${darkMode ? '#334155' : '#E2E8F0'}` }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '14px 16px', borderBottom: `1px solid ${darkMode ? '#334155' : '#F1F5F9'}` }}>
@@ -710,6 +785,7 @@ export default function AppLayout({ children }) {
                                 )}
                             </div>
                         </motion.div>
+                        </div>
                     </>
                 )}
             </AnimatePresence>

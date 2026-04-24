@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class Transfer extends Model
 {
+    use HasUserScope;
     protected $fillable = [
         'user_id', 'from_account_id', 'to_account_id',
         'amount', 'fee', 'transfer_date', 'description',

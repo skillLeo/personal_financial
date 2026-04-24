@@ -1,11 +1,149 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Head, Link, router } from '@inertiajs/react';
 import AppLayout from '@/Layouts/AppLayout';
 import ConfirmModal from '@/Components/ConfirmModal';
 import PhotoGalleryModal from '@/Components/PhotoGalleryModal';
 import ExportButton from '@/Components/ExportButton';
-import { motion } from 'framer-motion';
+import QuickCapture from '@/Components/QuickCapture';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
+
+const csrf = () => document.querySelector('meta[name=csrf-token]')?.content;
+const timeAgo = (iso) => {
+    const diff = (Date.now() - new Date(iso)) / 1000;
+    if (diff < 60)   return 'Just now';
+    if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+    if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+    return `${Math.floor(diff / 86400)}d ago`;
+};
+
+const MicIco  = () => <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>;
+const PlayIco = () => <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>;
+const ChevDown = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+
+/* ── Drafts Section ── */
+function DraftsSection({ onDraftConverted }) {
+    const [drafts, setDrafts]       = useState([]);
+    const [loading, setLoading]     = useState(true);
+    const [collapsed, setCollapsed] = useState(false);
+    const [discarding, setDiscarding] = useState(null);
+    const audioRef = useRef(null);
+
+    const loadDrafts = () => {
+        setLoading(true);
+        fetch('/drafts', { headers: { Accept: 'application/json' } })
+            .then(r => r.json())
+            .then(d => { setDrafts(d.drafts || []); setLoading(false); })
+            .catch(() => setLoading(false));
+    };
+
+    useEffect(() => { loadDrafts(); }, []);
+
+    const discard = async (id) => {
+        setDiscarding(id);
+        try {
+            await fetch(`/drafts/${id}/discard`, {
+                method: 'POST',
+                headers: { 'X-CSRF-TOKEN': csrf(), Accept: 'application/json' },
+            });
+            setDrafts(prev => prev.filter(d => d.id !== id));
+            toast.success('Draft discarded.');
+        } catch { toast.error('Failed to discard.'); }
+        setDiscarding(null);
+    };
+
+    const convert = (draft) => {
+        // Mark as converted then navigate to create form pre-filled
+        fetch(`/drafts/${draft.id}/convert`, {
+            method: 'POST',
+            headers: { 'X-CSRF-TOKEN': csrf(), Accept: 'application/json' },
+        });
+        setDrafts(prev => prev.filter(d => d.id !== draft.id));
+        const params = new URLSearchParams();
+        if (draft.amount) params.set('amount', draft.amount);
+        if (draft.label)  params.set('description', draft.label);
+        if (draft.type && draft.type !== 'unknown') params.set('type', draft.type);
+        router.visit(`/transactions/create?${params.toString()}`);
+        onDraftConverted?.();
+    };
+
+    const playVoice = (url) => {
+        if (!audioRef.current) return;
+        audioRef.current.src = url;
+        audioRef.current.play();
+    };
+
+    if (!loading && drafts.length === 0) return null;
+
+    return (
+        <div className="card" style={{ marginBottom: 16, borderLeft: '3px solid #F59E0B' }}>
+            <button onClick={() => setCollapsed(c => !c)}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', padding: 0 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: '#F59E0B' }}>Drafts</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', background: '#F59E0B', borderRadius: 99, padding: '1px 8px' }}>
+                        {loading ? '…' : drafts.length}
+                    </span>
+                    <span style={{ fontSize: 12, color: 'var(--sl-t3)' }}>Quick captures not yet converted</span>
+                </div>
+                <span style={{ color: 'var(--sl-t3)', display: 'flex', transform: collapsed ? 'rotate(-90deg)' : 'none', transition: 'transform 200ms' }}><ChevDown /></span>
+            </button>
+
+            <AnimatePresence>
+                {!collapsed && (
+                    <motion.div initial={{ height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }} transition={{ duration: 0.2 }} style={{ overflow: 'hidden' }}>
+                        <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 8 }}>
+                            {loading ? (
+                                <div style={{ fontSize: 12, color: 'var(--sl-t3)', padding: '8px 0' }}>Loading drafts…</div>
+                            ) : drafts.map(draft => (
+                                <div key={draft.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '10px 14px', background: 'var(--sl-surface-2)', borderRadius: 10, border: '1px solid var(--sl-border)', flexWrap: 'wrap' }}>
+                                    {/* Type badge */}
+                                    <div style={{
+                                        fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 99, flexShrink: 0,
+                                        background: draft.type === 'income' ? 'rgba(16,185,129,0.12)' : draft.type === 'expense' ? 'rgba(239,68,68,0.12)' : 'rgba(148,163,184,0.12)',
+                                        color:      draft.type === 'income' ? '#10B981'              : draft.type === 'expense' ? '#EF4444'              : '#94A3B8',
+                                    }}>{draft.type === 'unknown' ? '?' : draft.type}</div>
+
+                                    {/* Amount */}
+                                    <div style={{ fontSize: 15, fontWeight: 800, color: 'var(--sl-t1)', flexShrink: 0 }}>
+                                        {draft.amount ? `PKR ${Number(draft.amount).toLocaleString()}` : <span style={{ color: 'var(--sl-t3)', fontWeight: 400, fontSize: 12 }}>No amount</span>}
+                                    </div>
+
+                                    {/* Label */}
+                                    {draft.label && <div style={{ fontSize: 12, color: 'var(--sl-t2)', flex: 1, minWidth: 100 }}>{draft.label}</div>}
+
+                                    {/* Voice note */}
+                                    {draft.has_voice_note && (
+                                        <button onClick={() => playVoice(draft.voice_note_url)}
+                                            style={{ display: 'flex', alignItems: 'center', gap: 5, fontSize: 11, color: '#A78BFA', background: 'rgba(167,139,250,0.1)', border: '1px solid rgba(167,139,250,0.2)', borderRadius: 7, padding: '4px 9px', cursor: 'pointer', fontFamily: 'inherit', flexShrink: 0 }}>
+                                            <MicIco /> <PlayIco /> Voice
+                                        </button>
+                                    )}
+
+                                    {/* Time */}
+                                    <div style={{ fontSize: 11, color: 'var(--sl-t3)', flexShrink: 0 }}>{timeAgo(draft.created_at)}</div>
+
+                                    {/* Actions */}
+                                    <div style={{ display: 'flex', gap: 6, flexShrink: 0, marginLeft: 'auto' }}>
+                                        <button onClick={() => convert(draft)}
+                                            style={{ fontSize: 12, fontWeight: 600, color: '#10B981', background: 'rgba(16,185,129,0.1)', border: '1px solid rgba(16,185,129,0.2)', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', fontFamily: 'inherit' }}>
+                                            Convert
+                                        </button>
+                                        <button onClick={() => discard(draft.id)} disabled={discarding === draft.id}
+                                            style={{ fontSize: 12, fontWeight: 600, color: '#EF4444', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: 7, padding: '5px 10px', cursor: 'pointer', fontFamily: 'inherit', opacity: discarding === draft.id ? 0.6 : 1 }}>
+                                            {discarding === draft.id ? '…' : 'Discard'}
+                                        </button>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+            <audio ref={audioRef} style={{ display: 'none' }} />
+        </div>
+    );
+}
 
 const FilterIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>;
 const SearchIcon = () => <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>;
@@ -22,6 +160,8 @@ export default function TransactionsIndex({ transactions, filters, summary, acco
     const [deleting, setDeleting] = useState(false);
     const [galleryPhotos, setGalleryPhotos] = useState(null);
     const [localFilters, setLocalFilters] = useState(filters || {});
+    const [quickCaptureOpen, setQuickCaptureOpen] = useState(false);
+    const [draftKey, setDraftKey] = useState(0);
 
     const applyFilters = (e) => {
         e.preventDefault();
@@ -53,11 +193,17 @@ export default function TransactionsIndex({ transactions, filters, summary, acco
                 </div>
                 <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
                     <ExportButton baseUrl="/export/transactions" filters={localFilters} />
+                    <button onClick={() => setQuickCaptureOpen(true)} className="btn-secondary" style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 13 }}>
+                        <PlusIcon /> Quick
+                    </button>
                     <Link href="/transactions/create" className="btn btn-primary">
                         <PlusIcon /> Add Transaction
                     </Link>
                 </div>
             </div>
+
+            {/* Drafts section */}
+            <DraftsSection key={draftKey} onDraftConverted={() => {}} />
 
             {/* Summary */}
             <div className="summary-strip">
@@ -283,6 +429,11 @@ export default function TransactionsIndex({ transactions, filters, summary, acco
                 loading={deleting}
             />
             <PhotoGalleryModal photos={galleryPhotos} open={!!galleryPhotos} onClose={() => setGalleryPhotos(null)} />
+            <QuickCapture
+                open={quickCaptureOpen}
+                onClose={() => setQuickCaptureOpen(false)}
+                onSaved={() => { setDraftKey(k => k + 1); setQuickCaptureOpen(false); }}
+            />
         </AppLayout>
     );
 }

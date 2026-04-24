@@ -2,10 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class AuditLog extends Model
 {
+    use HasUserScope;
     protected $fillable = [
         'user_id', 'action', 'description', 'metadata', 'ip_address',
     ];

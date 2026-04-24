@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 
 class NotificationLog extends Model
 {
+    use HasUserScope;
+
     protected $table = 'notifications_log';
 
     protected $fillable = [

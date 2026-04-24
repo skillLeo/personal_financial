@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Crypt;
 
 class AiSetting extends Model
 {
+    use HasUserScope;
     protected $fillable = [
         'user_id', 'provider', 'api_key', 'model', 'custom_endpoint', 'is_enabled',
     ];

@@ -13,7 +13,10 @@ class User extends Authenticatable
 
     protected $fillable = [
         'name', 'business_name', 'email', 'password', 'phone',
-        'profile_photo', 'currency', 'timezone', 'pin_code', 'last_login_at',
+        'profile_photo', 'avatar_url', 'currency', 'timezone',
+        'pin_code', 'last_login_at', 'last_login_ip',
+        'google_id', 'is_active', 'is_admin', 'plan',
+        'email_verified_at',
     ];
 
     protected $hidden = ['password', 'remember_token', 'pin_code'];
@@ -24,53 +27,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login_at'     => 'datetime',
             'password'          => 'hashed',
+            'is_active'         => 'boolean',
+            'is_admin'          => 'boolean',
+            'dark_mode'         => 'boolean',
         ];
     }
 
-    public function accounts()
+    public function getAvatarAttribute(): ?string
     {
-        return $this->hasMany(Account::class);
+        if ($this->avatar_url) return $this->avatar_url;
+        if ($this->profile_photo) return asset('storage/' . $this->profile_photo);
+        return null;
     }
 
-    public function categories()
-    {
-        return $this->hasMany(Category::class);
-    }
-
-    public function people()
-    {
-        return $this->hasMany(Person::class);
-    }
-
-    public function transactions()
-    {
-        return $this->hasMany(Transaction::class);
-    }
-
-    public function loans()
-    {
-        return $this->hasMany(Loan::class);
-    }
-
-    public function subscriptions()
-    {
-        return $this->hasMany(Subscription::class);
-    }
-
-    public function employees()
-    {
-        return $this->hasMany(Employee::class);
-    }
-
-    public function budgets()
-    {
-        return $this->hasMany(Budget::class);
-    }
-
-    public function notificationLogs()
-    {
-        return $this->hasMany(NotificationLog::class);
-    }
+    public function accounts()       { return $this->hasMany(Account::class); }
+    public function categories()     { return $this->hasMany(Category::class); }
+    public function people()         { return $this->hasMany(Person::class); }
+    public function transactions()   { return $this->hasMany(Transaction::class); }
+    public function loans()          { return $this->hasMany(Loan::class); }
+    public function subscriptions()  { return $this->hasMany(Subscription::class); }
+    public function employees()      { return $this->hasMany(Employee::class); }
+    public function budgets()        { return $this->hasMany(Budget::class); }
+    public function notificationLogs() { return $this->hasMany(NotificationLog::class); }
+    public function aiSetting()      { return $this->hasOne(AiSetting::class); }
+    public function backupSetting()  { return $this->hasOne(BackupSetting::class); }
+    public function transfers()      { return $this->hasMany(Transfer::class); }
 
     public function totalIncomeThisMonth(): float
     {
@@ -97,7 +78,7 @@ class User extends Authenticatable
 
     public function totalSavings(): float
     {
-        $income = (float) $this->transactions()->where('type', 'income')->sum('amount');
+        $income  = (float) $this->transactions()->where('type', 'income')->sum('amount');
         $expense = (float) $this->transactions()->where('type', 'expense')->sum('amount');
         return $income - $expense;
     }

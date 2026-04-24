@@ -1,0 +1,31 @@
+import{a as e,g as t,l as n,n as r,t as i}from"./jsx-runtime-C11HiuYV.js";var a=t(n(),1),o=i(),s=()=>(0,o.jsxs)(`svg`,{width:`22`,height:`22`,viewBox:`0 0 24 24`,fill:`none`,stroke:`white`,strokeWidth:`2.5`,strokeLinecap:`round`,strokeLinejoin:`round`,children:[(0,o.jsx)(`polyline`,{points:`23 6 13.5 15.5 8.5 10.5 1 18`}),(0,o.jsx)(`polyline`,{points:`17 6 23 6 23 12`})]}),c=()=>(0,o.jsxs)(`svg`,{width:`18`,height:`18`,viewBox:`0 0 24 24`,fill:`none`,style:{animation:`vr-spin 0.8s linear infinite`},children:[(0,o.jsx)(`circle`,{cx:`12`,cy:`12`,r:`10`,stroke:`rgba(255,255,255,0.3)`,strokeWidth:`3`}),(0,o.jsx)(`path`,{d:`M12 2a10 10 0 0 1 10 10`,stroke:`white`,strokeWidth:`3`,strokeLinecap:`round`})]}),l=()=>(0,o.jsx)(`svg`,{width:`44`,height:`44`,viewBox:`0 0 24 24`,fill:`none`,stroke:`#10B981`,strokeWidth:`1.5`,strokeLinecap:`round`,strokeLinejoin:`round`,children:(0,o.jsx)(`path`,{d:`M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4`})}),u=`
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: linear-gradient(135deg, #080D1A 0%, #0F172A 100%); min-height: 100vh; font-family: 'Plus Jakarta Sans', system-ui, sans-serif; display: flex; align-items: center; justify-content: center; padding: 24px; }
+.vr-card { background: #fff; border-radius: 20px; padding: 48px 44px; max-width: 460px; width: 100%; box-shadow: 0 24px 64px rgba(0,0,0,0.35); animation: vr-in 350ms ease both; }
+.vr-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 32px; }
+.vr-logo-icon { width: 44px; height: 44px; background: linear-gradient(135deg, #059669, #10B981); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+.vr-logo-name { font-size: 22px; font-weight: 800; color: #0F172A; }
+.vr-icon-wrap { width: 72px; height: 72px; background: #F0FDF4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 24px; border: 2px solid #BBF7D0; }
+.vr-title { font-size: 26px; font-weight: 800; color: #0F172A; text-align: center; letter-spacing: -0.5px; margin-bottom: 10px; }
+.vr-desc { font-size: 14px; color: #64748B; text-align: center; line-height: 1.6; margin-bottom: 32px; }
+.vr-email { font-weight: 700; color: #0F172A; }
+.vr-otp-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 8px; }
+.vr-otp-input { width: 52px; height: 60px; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 24px; font-weight: 800; color: #0F172A; text-align: center; font-family: inherit; background: #FAFBFC; transition: border-color 200ms, box-shadow 200ms; outline: none; }
+.vr-otp-input:focus { border-color: #10B981; box-shadow: 0 0 0 4px rgba(16,185,129,0.12); background: #fff; }
+.vr-otp-input.vr-filled { border-color: #10B981; background: #F0FDF4; }
+.vr-otp-input.vr-err { border-color: #EF4444; background: #FEF2F2; }
+.vr-field-error { font-size: 12px; color: #EF4444; text-align: center; margin-bottom: 16px; font-weight: 500; min-height: 18px; }
+.vr-btn { width: 100%; height: 52px; background: #0F172A; color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 200ms; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 20px; }
+.vr-btn:hover:not(:disabled) { background: #1E293B; transform: translateY(-1px); box-shadow: 0 8px 25px rgba(15,23,42,0.25); }
+.vr-btn:disabled { opacity: 0.75; cursor: not-allowed; }
+.vr-back { display: block; text-align: center; font-size: 14px; color: #94A3B8; text-decoration: none; transition: color 150ms; }
+.vr-back:hover { color: #64748B; }
+@keyframes vr-in { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes vr-spin { to { transform: rotate(360deg); } }
+@media (max-width: 500px) {
+    .vr-card { padding: 36px 24px; }
+    .vr-otp-input { width: 44px; height: 54px; font-size: 20px; }
+    .vr-otp-row { gap: 8px; }
+}
+`;function d({email:t,flash:n}){let i=(0,a.useRef)([]),[d,f]=(0,a.useState)([``,``,``,``,``,``]),{data:p,setData:m,post:h,processing:g,errors:_}=e({email:t||``,otp:``});(0,a.useEffect)(()=>{m(`otp`,d.join(``))},[d]);let v=(e,t)=>{let n=t.replace(/\D/g,``).slice(-1),r=[...d];r[e]=n,f(r),n&&e<5&&i.current[e+1]?.focus()},y=(e,t)=>{t.key===`Backspace`&&!d[e]&&e>0&&i.current[e-1]?.focus()},b=e=>{e.preventDefault();let t=e.clipboardData.getData(`text`).replace(/\D/g,``).slice(0,6),n=[...d];for(let e=0;e<6;e++)n[e]=t[e]||``;f(n),i.current[Math.min(t.length,5)]?.focus()},x=e=>{e.preventDefault(),h(`/reset-password/verify`)},S=!!_.otp||!!_.email;return(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)(r,{title:`Enter Reset Code — SkillLeo`,children:(0,o.jsx)(`style`,{children:u})}),(0,o.jsxs)(`div`,{className:`vr-card`,children:[(0,o.jsxs)(`div`,{className:`vr-logo`,children:[(0,o.jsx)(`div`,{className:`vr-logo-icon`,children:(0,o.jsx)(s,{})}),(0,o.jsx)(`div`,{className:`vr-logo-name`,children:`SkillLeo`})]}),(0,o.jsx)(`div`,{className:`vr-icon-wrap`,children:(0,o.jsx)(l,{})}),(0,o.jsx)(`h1`,{className:`vr-title`,children:`Enter reset code`}),(0,o.jsxs)(`p`,{className:`vr-desc`,children:[`We sent a 6-digit reset code to`,(0,o.jsx)(`br`,{}),(0,o.jsx)(`span`,{className:`vr-email`,children:p.email}),`.`,(0,o.jsx)(`br`,{}),`The code expires in 10 minutes.`]}),(0,o.jsxs)(`form`,{onSubmit:x,children:[(0,o.jsx)(`input`,{type:`hidden`,value:p.email}),(0,o.jsx)(`div`,{className:`vr-otp-row`,onPaste:b,children:d.map((e,t)=>(0,o.jsx)(`input`,{ref:e=>i.current[t]=e,type:`text`,inputMode:`numeric`,maxLength:1,value:e,onChange:e=>v(t,e.target.value),onKeyDown:e=>y(t,e),className:`vr-otp-input${e?` vr-filled`:``}${S?` vr-err`:``}`,autoFocus:t===0},t))}),(0,o.jsx)(`div`,{className:`vr-field-error`,children:_.otp||_.email||``}),(0,o.jsx)(`button`,{type:`submit`,disabled:g||d.join(``).length<6,className:`vr-btn`,children:g?(0,o.jsxs)(o.Fragment,{children:[(0,o.jsx)(c,{}),`Verifying…`]}):`Continue`})]}),(0,o.jsx)(`a`,{href:`/forgot-password`,className:`vr-back`,children:`← Request a new code`})]})]})}export{d as default};

@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasUserScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Loan extends Model
 {
-    use HasFactory;
+    use HasFactory, HasUserScope;
 
     protected $fillable = [
         'user_id', 'person_id', 'type', 'total_amount', 'paid_amount',

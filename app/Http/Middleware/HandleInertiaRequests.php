@@ -17,9 +17,11 @@ class HandleInertiaRequests extends Middleware
 
     public function share(Request $request): array
     {
-        $unreadCount = 0;
-        if ($request->user()) {
-            $unreadCount = NotificationLog::where('user_id', $request->user()->id)
+        $user         = $request->user();
+        $unreadCount  = 0;
+
+        if ($user) {
+            $unreadCount = NotificationLog::where('user_id', $user->id)
                 ->where('is_read', false)
                 ->count();
         }
@@ -27,17 +29,21 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user() ? [
-                    'id'           => $request->user()->id,
-                    'name'         => $request->user()->name,
-                    'email'        => $request->user()->email,
-                    'business_name'=> $request->user()->business_name,
-                    'phone'        => $request->user()->phone,
-                    'profile_photo'=> $request->user()->profile_photo
-                        ? asset('storage/' . $request->user()->profile_photo)
-                        : null,
-                    'currency'     => $request->user()->currency,
-                    'timezone'     => $request->user()->timezone,
+                'user' => $user ? [
+                    'id'               => $user->id,
+                    'name'             => $user->name,
+                    'email'            => $user->email,
+                    'business_name'    => $user->business_name,
+                    'phone'            => $user->phone,
+                    'avatar'           => $user->avatar, // resolves avatar_url or profile_photo
+                    'currency'         => $user->currency ?? 'PKR',
+                    'timezone'         => $user->timezone,
+                    'plan'             => $user->plan ?? 'free',
+                    'is_admin'         => (bool) $user->is_admin,
+                    'email_verified'   => (bool) $user->email_verified_at,
+                    'has_google'       => (bool) $user->google_id,
+                    'last_login_at'    => $user->last_login_at?->toIso8601String(),
+                    'last_login_ip'    => $user->last_login_ip,
                 ] : null,
             ],
             'flash' => [
